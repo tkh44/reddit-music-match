@@ -39,7 +39,7 @@ function getRedditMusic() {
                 var reddit = JSON.parse(data).data.children,
                     len = reddit.length;
 
-                //only taking top 15
+                //only taking top 3
                 if (len > 3) {
                     len = 3;
                 }
