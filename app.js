@@ -1,7 +1,7 @@
 //Globals
 var http = require('http'),
     utils = require('./utils'),
-    spotify = require('spotifyapi');
+    spotify = require('./spotify');
 
 _s = require('underscore.string');
 
@@ -9,11 +9,12 @@ var load_time = Math.round(new Date().getTime() / 1000);
 
 //Our reddits to scrape
 var reddits = [
-    'kyes_playground'
+    'music'
 ];
 
 
 function getRedditMusic() {
+    var lookups = [];
     console.log('Checking reddit...');
     var options = {
         host: 'www.reddit.com',
@@ -40,8 +41,8 @@ function getRedditMusic() {
                     len = reddit.length;
 
                 //only taking top 3
-                if (len > 3) {
-                    len = 3;
+                if (len > 30) {
+                    len = 30;
                 }
 
                 for (var i = 0; i < len; i++) {
@@ -58,8 +59,14 @@ function getRedditMusic() {
                         var artist = song_information.artist;
                         var song_title = song_information.title;
 
-                        var spotifyLink = utils.getSpotifyLink(artist, song_title);
-                        // console.log('Score: ',score);
+                        var song = {}
+                        song['artist'] = artist;
+                        song['title'] = song_title;
+
+                        lookups.push(song);
+
+                        //var spotifyLink = utils.getSpotifyLink(artist, song_title);
+                        //console.log('Score: ',score);
                         console.log('Title: ', title);
                         console.log('Artist: ', artist);
                         console.log('Song Title: ', song_title);
@@ -69,6 +76,9 @@ function getRedditMusic() {
                         console.log();
                     }
                 }
+                for (var k = 0; k < lookups.length; k++) {
+                    spotify.getSpotifyLink(lookups[k]['artist'], lookups[k]['title']);
+                }
             });
         }
     }).on('error', function(e) {
@@ -76,9 +86,9 @@ function getRedditMusic() {
     });
 }
 
-setInterval(function(){
-    getRedditMusic();
-}, 1000 * 60 * 3);//Every 3 minutes
+// setInterval(function(){
+//     getRedditMusic();
+// }, 1000 * 60 * 3);//Every 3 minutes
 
 getRedditMusic();
 

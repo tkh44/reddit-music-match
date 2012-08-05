@@ -1,0 +1,11 @@
+{
+  "name" : "reddit-music-match-bot",
+  "description" : "Reddit bot that retrieves relevant music links from post title",
+  "version" : "0.0.1",
+  "author" : "Kye Hohenberger <kye.hohenberger@gmail.com>",
+  "engines" : ["node"],
+  "repository" : { "type":"git", "url":"https://github.com/tkh44/reddit-music-match" },
+  "dependencies" : {
+    "spotifyapi" : ">=1.0.0"
+  }
+}
