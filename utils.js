@@ -9,7 +9,7 @@ exports.getSongInfoFromTitle = function(string) {
     //var genre = string.match(/\[([^}]*)\]/);//get genre before we clean out non-alpha/num
     var clean_title = string.replace(/\[.*\]|-|\W\s|\*.*\*|\(.*\)/ig, '--');
 
-    split_string = _s.words(clean_title, '--');
+    var split_string = _s.words(clean_title, '--');
 
     for(var i = 0, len = split_string.length; i < len; i++) {
         split_string[i] = _s.trim(split_string[i]);
