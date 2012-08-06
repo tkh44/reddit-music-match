@@ -11,7 +11,7 @@ exports.getSpotifyLink = function(artist, title) {
         page: 1,
     }, function (error, response){
         var data = response.body;
-        tracks = data['tracks'];
+        var tracks = data['tracks'];
 
         for (var i in tracks) {
             var this_track = tracks[i];
