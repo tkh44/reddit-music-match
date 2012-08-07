@@ -1,21 +1,22 @@
 //Globals
 var http = require('http'),
     utils = require('./utils'),
-    spotify = require('./spotify');
-
-_s = require('underscore.string');
+    spotify = require('./spotify'),
+    tinysong = require('./tinysong'),
+    _s = require('underscore.string');
 
 var load_time = Math.round(new Date().getTime() / 1000);
 
 //Our reddits to scrape
 var reddits = [
-    'music'
+    'kyes_playground'
 ];
 
+var lookups = [];
 
 function getRedditMusic() {
-    var lookups = [];
     console.log('Checking reddit...');
+    
     var options = {
         host: 'www.reddit.com',
         port: 80,
@@ -41,49 +42,66 @@ function getRedditMusic() {
                     len = reddit.length;
 
                 //only taking top 3
-                if (len > 30) {
-                    len = 30;
+                if (len > 5) {
+                    len = 5;
                 }
 
                 for (var i = 0; i < len; i++) {
-                    var post = reddit[i].data;
-
+                    var this_post = reddit[i].data;
                     //we dont care about self posts
-                    if (!post.is_self) {
-                        var score = post.score,
-                            title = post.title.toString(),
-                            url = post.url;
-
-                        var song_information = utils.getSongInfoFromTitle(title);
+                    if (!this_post.is_self) {
                         
-                        var artist = song_information.artist;
-                        var song_title = song_information.title;
+                        (function(post){
 
-                        var song = {}
-                        song['artist'] = artist;
-                        song['title'] = song_title;
+                            lookups[i] = {};
+                            var score = post.score,
+                                title = post.title.toString(),
+                                url = post.url;
 
-                        lookups.push(song);
+                            var song_information = utils.getSongInfoFromTitle(title);
+                            
+                            var artist = song_information.artist;
+                            var song_title = song_information.title;
 
-                        //var spotifyLink = utils.getSpotifyLink(artist, song_title);
-                        //console.log('Score: ',score);
-                        console.log('Title: ', title);
-                        console.log('Artist: ', artist);
-                        console.log('Song Title: ', song_title);
-                        console.log('Url  : ', url);
-                        //console.log('Spotify Link', spotifyLink);
+                            // var song = {};
+                            // song['artist'] = artist;
+                            // song['title'] = song_title;
 
-                        console.log();
+                            //var spotifyLink = utils.getSpotifyLink(artist, song_title);
+                            //console.log('Score: ',score);
+                            // console.log('Title: ', title);
+                            // console.log('Artist: ', artist);
+                            // console.log('Song Title: ', song_title);
+                            
+                            lookups[i]['post_title'] = title;
+                            lookups[i]['artist'] = artist;
+                            lookups[i]['song_title'] = song_title;
+                            lookups[i]['spotify'] = spotify.getSpotifyLink(artist, song_title);
+
+                            
+                            //console.log('Spotify Link: ', spotify_link);
+                            // console.log('Url  : ', url);
+                            //console.log('Spotify Link', spotifyLink);
+                        })(this_post);
                     }
-                }
-                for (var k = 0; k < lookups.length; k++) {
-                    spotify.getSpotifyLink(lookups[k]['artist'], lookups[k]['title']);
                 }
             });
         }
     }).on('error', function(e) {
         console.log('Got error: ', e.message);
     });
+
+
+}
+
+function displayResults() {
+    for (var k = 0; k < lookups.length; k++) {
+        console.log('Post Title: ', lookups[k]['post_title']);
+        console.log('Artist: ', lookups[k]['artist']);
+        console.log('Song Title: ', lookups[k]['song_title']);
+        console.log('Spotify Link', lookups[k]['spotify']);
+        console.log();
+    }
 }
 
 // setInterval(function(){
@@ -91,5 +109,9 @@ function getRedditMusic() {
 // }, 1000 * 60 * 3);//Every 3 minutes
 
 getRedditMusic();
+
+setTimeout(function() {
+    displayResults();
+}, 3000);
 
 
