@@ -7,6 +7,8 @@
   "repository" : { "type":"git", "url":"https://github.com/tkh44/reddit-music-match" },
   "dependencies" : {
     "spotifyapi" : ">=1.0.0",
+    "express": "",
+    "request": "",
     "underscore.string": ">=2.2.0"
   }
 }
